@@ -61,7 +61,7 @@ where
     ///
     /// # Arguments
     ///
-    /// - `records`: Sorted list of key-value pairs.
+    /// - `records`: List of key-value pairs.
     ///
     /// # Errors
     ///
@@ -104,6 +104,17 @@ where
     }
 
     /// Returns true if the map contains a value for the specified key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use simplearrayhash::HashMap;
+    ///
+    /// let records = vec![("icdm", 0), ("idce", 1), ("sigmod", 2)];
+    /// let map = HashMap::new(&records).unwrap();
+    /// assert_eq!(map.contains_key("idce"), true);
+    /// assert_eq!(map.contains_key("sigir"), false);
+    /// ```
     #[inline(always)]
     pub fn contains_key<K>(&self, key: K) -> bool
     where
@@ -113,6 +124,17 @@ where
     }
 
     /// Returns a reference to the value corresponding to the key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use simplearrayhash::HashMap;
+    ///
+    /// let records = vec![("icdm", 0), ("idce", 1), ("sigmod", 2)];
+    /// let map = HashMap::new(&records).unwrap();
+    /// assert_eq!(map.get("idce"), Some(&1));
+    /// assert_eq!(map.get("sigir"), None);
+    /// ```
     #[inline(always)]
     pub fn get<K>(&self, key: K) -> Option<&V>
     where
@@ -122,6 +144,17 @@ where
     }
 
     /// Returns a mutable reference to the value corresponding to the key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use simplearrayhash::HashMap;
+    ///
+    /// let records = vec![("icdm", 0), ("idce", 1), ("sigmod", 2)];
+    /// let mut map = HashMap::new(&records).unwrap();
+    /// *map.get_mut("idce").unwrap() = 3;
+    /// assert_eq!(map.get("idce"), Some(&3));
+    /// ```
     #[inline(always)]
     pub fn get_mut<K>(&mut self, key: K) -> Option<&mut V>
     where
@@ -131,6 +164,16 @@ where
     }
 
     /// Returns the number of elements in the map.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use simplearrayhash::HashMap;
+    ///
+    /// let records = vec![("icdm", 0), ("idce", 1), ("sigmod", 2)];
+    /// let map = HashMap::new(&records).unwrap();
+    /// assert_eq!(map.len(), 3);
+    /// ```
     #[inline(always)]
     pub fn len(&self) -> usize {
         self.table.num_keys()
