@@ -38,14 +38,14 @@ where
 }
 
 #[derive(Clone)]
-pub struct Map<V>
+pub struct HashMap<V>
 where
     V: Default + Clone,
 {
     table: Table<MapNode<V>>,
 }
 
-impl<V> Map<V>
+impl<V> HashMap<V>
 where
     V: Default + Clone,
 {
@@ -207,7 +207,7 @@ mod tests {
     fn test_toy() {
         let keys = vec!["aaa", "abc", "asdddfsb", "adsfv"];
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
-        let map = Map::new(&records);
+        let map = HashMap::new(&records);
         for (k, v) in records {
             assert_eq!(*map.get(k).unwrap(), v);
         }
