@@ -2,6 +2,15 @@
 name = "simplearrayhash"
 version = "0.1.0"
 edition = "2021"
+authors = ["Shunsuke Kanda <shnsk.knd@gmail.com>"]
+description = "simplearrayhash"
+license = "MIT"
+homepage = "https://github.com/kampersanda/simplearrayhash"
+repository = "https://github.com/kampersanda/simplearrayhash"
+readme = "README.md"
+keywords = ["search", "string", "hash-table"]
+categories = ["text-processing", "algorithms", "data-structures"]
+exclude = [".*"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
