@@ -1,3 +1,8 @@
+//! # simplearrayhash
+//!
+//! Just a fast hash table for string keys.
+#![deny(missing_docs)]
+
 use anyhow::{anyhow, Result};
 
 const MAX_LOAD_FACTOR: f64 = 0.8;
@@ -39,6 +44,7 @@ where
     }
 }
 
+/// Fast hash map implementation for string kyes.
 #[derive(Clone)]
 pub struct HashMap<V>
 where
@@ -51,6 +57,29 @@ impl<V> HashMap<V>
 where
     V: Default + Clone,
 {
+    /// Creates a new [`HashMap`] from input records.
+    ///
+    /// # Arguments
+    ///
+    /// - `records`: Sorted list of key-value pairs.
+    ///
+    /// # Errors
+    ///
+    /// An error will be returned when
+    ///
+    ///  - `records` is empty, or
+    ///  - `records` contains duplicate keys.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use simplearrayhash::HashMap;
+    ///
+    /// let records = vec![("icdm", 0), ("idce", 1), ("sigmod", 2)];
+    /// let map = HashMap::new(&records).unwrap();
+    /// assert_eq!(map.get("idce"), Some(&1));
+    /// assert_eq!(map.get("sigir"), None);
+    /// ```
     pub fn new<K>(records: &[(K, V)]) -> Result<Self>
     where
         K: AsRef<[u8]>,
@@ -74,14 +103,16 @@ where
         Ok(Self { table })
     }
 
+    /// Returns true if the map contains a value for the specified key.
     #[inline(always)]
-    pub fn contains<K>(&self, key: K) -> bool
+    pub fn contains_key<K>(&self, key: K) -> bool
     where
         K: AsRef<[u8]>,
     {
         self.table.get(key).is_some()
     }
 
+    /// Returns a reference to the value corresponding to the key.
     #[inline(always)]
     pub fn get<K>(&self, key: K) -> Option<&V>
     where
@@ -90,6 +121,7 @@ where
         self.table.get(key).map(|nd| &nd.val)
     }
 
+    /// Returns a mutable reference to the value corresponding to the key.
     #[inline(always)]
     pub fn get_mut<K>(&mut self, key: K) -> Option<&mut V>
     where
@@ -98,9 +130,16 @@ where
         self.table.get_mut(key).map(|nd| &mut nd.val)
     }
 
+    /// Returns the number of elements in the map.
     #[inline(always)]
-    pub fn num_keys(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.table.num_keys()
+    }
+
+    /// Returns true if the map contains no elements.
+    #[inline(always)]
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
@@ -218,7 +257,7 @@ mod tests {
         let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
         let map = HashMap::new(&records).unwrap();
-        assert_eq!(map.num_keys(), 5);
+        assert_eq!(map.len(), 5);
     }
 
     #[test]
