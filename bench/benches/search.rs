@@ -28,7 +28,7 @@ fn criterion_unidic_get(c: &mut Criterion) {
 }
 
 fn add_get_benches(group: &mut BenchmarkGroup<WallTime>, keys: &[String], queries: &[String]) {
-    group.bench_function("simplearrayhash", |b| {
+    group.bench_function("simplearrayhash/HashMap", |b| {
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
         let map = simplearrayhash::HashMap::new(&records).unwrap();
         b.iter(|| {
@@ -61,6 +61,22 @@ fn add_get_benches(group: &mut BenchmarkGroup<WallTime>, keys: &[String], querie
     group.bench_function("std/HashMap/city", |b| {
         let s = RandomState::<city::Hash64>::new();
         let mut map = std::collections::HashMap::with_hasher(s);
+        for (i, key) in keys.iter().enumerate() {
+            map.insert(key, i as u32);
+        }
+        b.iter(|| {
+            let mut dummy = 0;
+            for query in queries {
+                dummy += map.get(query).unwrap();
+            }
+            if dummy == 0 {
+                panic!();
+            }
+        });
+    });
+
+    group.bench_function("fnv/FnvHashMap", |b| {
+        let mut map = fnv::FnvHashMap::default();
         for (i, key) in keys.iter().enumerate() {
             map.insert(key, i as u32);
         }

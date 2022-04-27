@@ -11,6 +11,7 @@ simplearrayhash = { path = ".." }  # Apache-2.0 or MIT
 [dev-dependencies]
 criterion = { version = "0.3", features = ["html_reports"] }  # Apache-2.0 or MIT
 fasthash = "0.4"
+fnv = "1.0.7"
 
 [[bench]]
 name = "search"
