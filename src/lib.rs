@@ -127,7 +127,7 @@ where
         let capacity = ceil_two((num_keys as f64 / MAX_LOAD_FACTOR) as usize);
         let capacity_mask = capacity - 1;
         let mut mapping = vec![None; capacity];
-        for (i, key) in keys.into_iter().enumerate() {
+        for (i, key) in keys.iter().enumerate() {
             let mut pos = hash_key(key.as_ref()) & capacity_mask;
             while mapping[pos].is_some() {
                 pos = (pos + 1) & capacity_mask;
@@ -194,6 +194,7 @@ where
     }
 
     #[inline(always)]
+    #[allow(clippy::missing_const_for_fn)]
     fn num_keys(&self) -> usize {
         self.num_keys
     }
@@ -204,7 +205,7 @@ fn hash_key(k: &[u8]) -> usize {
     fasthash::city::hash64(k) as usize
 }
 
-fn ceil_two(n: usize) -> usize {
+const fn ceil_two(n: usize) -> usize {
     1 << (WORD_BITS - n.leading_zeros() as usize)
 }
 
