@@ -1,3 +1,5 @@
+use anyhow::{anyhow, Result};
+
 const MAX_LOAD_FACTOR: f64 = 0.8;
 const WORD_BITS: usize = std::mem::size_of::<usize>() * 8;
 
@@ -49,20 +51,27 @@ impl<V> HashMap<V>
 where
     V: Default + Clone,
 {
-    pub fn new<K>(records: &[(K, V)]) -> Self
+    pub fn new<K>(records: &[(K, V)]) -> Result<Self>
     where
         K: AsRef<[u8]>,
     {
+        if records.is_empty() {
+            return Err(anyhow!("The input records must not be empty."));
+        }
         let keys: Vec<_> = records.iter().map(|(k, _)| k).collect();
         let mut table = Table::<MapNode<V>>::build(&keys);
         let mut flags = vec![false; table.nodes.len()]; // to check duplication
         for (k, v) in records {
             let pos = table.get_pos(k).unwrap();
-            assert!(!flags[pos]);
+            if flags[pos] {
+                return Err(anyhow!(
+                    "The input records must not contain duplicated keys."
+                ));
+            }
             table.nodes[pos].as_mut().unwrap().val = v.clone();
             flags[pos] = true;
         }
-        Self { table }
+        Ok(Self { table })
     }
 
     #[inline(always)]
@@ -204,12 +213,63 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_toy() {
-        let keys = vec!["aaa", "abc", "asdddfsb", "adsfv"];
+    fn test_basic() {
+        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
-        let map = HashMap::new(&records);
-        for (k, v) in records {
+        let map = HashMap::new(&records).unwrap();
+        assert_eq!(map.num_keys(), 5);
+    }
+
+    #[test]
+    fn test_get() {
+        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
+        let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
+        let map = HashMap::new(&records).unwrap();
+        for &(k, v) in &records {
             assert_eq!(*map.get(k).unwrap(), v);
         }
+        assert_eq!(map.get("sigkdd"), None);
+        assert_eq!(map.get("idml"), None);
+    }
+
+    #[test]
+    fn test_get_mut() {
+        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
+        let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
+        let mut map = HashMap::new(&records).unwrap();
+        for &(k, v) in &records {
+            *map.get_mut(k).unwrap() = v * 3;
+        }
+        for &(k, v) in &records {
+            assert_eq!(*map.get(k).unwrap(), v * 3);
+        }
+    }
+
+    #[test]
+    fn test_get_with_empty_key() {
+        let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
+        let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
+        let map = HashMap::new(&records).unwrap();
+        for &(k, v) in &records {
+            assert_eq!(*map.get(k).unwrap(), v);
+        }
+        assert_eq!(map.get("sigkdd"), None);
+        assert_eq!(map.get("idml"), None);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_empty() {
+        let keys = vec!["icdm"];
+        let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
+        HashMap::new(&records[0..0]).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_duplicate() {
+        let keys = vec!["icdm", "icdm"];
+        let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
+        HashMap::new(&records).unwrap();
     }
 }

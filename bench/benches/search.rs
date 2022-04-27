@@ -30,7 +30,7 @@ fn criterion_unidic_get(c: &mut Criterion) {
 fn add_get_benches(group: &mut BenchmarkGroup<WallTime>, keys: &[String], queries: &[String]) {
     group.bench_function("simplearrayhash", |b| {
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
-        let map = simplearrayhash::HashMap::new(&records);
+        let map = simplearrayhash::HashMap::new(&records).unwrap();
         b.iter(|| {
             let mut dummy = 0;
             for query in queries {
