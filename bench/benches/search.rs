@@ -90,6 +90,41 @@ fn add_get_benches(group: &mut BenchmarkGroup<WallTime>, keys: &[String], querie
             }
         });
     });
+
+    group.bench_function("crawdad/trie", |b| {
+        let trie = crawdad::Trie::from_keys(keys).unwrap();
+        b.iter(|| {
+            let mut dummy = 0;
+            for query in queries {
+                dummy += trie.exact_match(query.chars()).unwrap();
+            }
+            if dummy == 0 {
+                panic!();
+            }
+        });
+    });
+
+    group.bench_function("yada", |b| {
+        let data = yada::builder::DoubleArrayBuilder::build(
+            &keys
+                .iter()
+                .cloned()
+                .enumerate()
+                .map(|(i, key)| (key, i as u32))
+                .collect::<Vec<_>>(),
+        )
+        .unwrap();
+        let da = yada::DoubleArray::new(data);
+        b.iter(|| {
+            let mut dummy = 0;
+            for query in queries {
+                dummy += da.exact_match_search(query).unwrap();
+            }
+            if dummy == 0 {
+                panic!();
+            }
+        });
+    });
 }
 
 fn load_file<P>(path: P) -> Vec<String>
