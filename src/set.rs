@@ -63,7 +63,7 @@ impl HashSet {
         if keys.is_empty() {
             return Err(anyhow!("The input keys must not be empty."));
         }
-        let table = Table::<SetNode>::build(&keys);
+        let table = Table::<SetNode>::build(keys);
         let mut flags = vec![false; table.nodes.len()]; // to check duplication
         for k in keys {
             let pos = table.get_pos(k).unwrap();
