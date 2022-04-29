@@ -1,6 +1,6 @@
 //! # simplearrayhash
 //!
-//! Just a fast hash table for string keys.
+//! A simple fast implementation of an open addressing hash table for string keys.
 #![deny(missing_docs)]
 
 pub mod map;
