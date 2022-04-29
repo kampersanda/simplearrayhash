@@ -16,11 +16,8 @@ where
     V: Default,
 {
     fn new(ptr: usize, len: usize) -> Self {
-        Self {
-            ptr,
-            len,
-            val: V::default(),
-        }
+        let val = V::default();
+        Self { ptr, len, val }
     }
 
     #[inline(always)]

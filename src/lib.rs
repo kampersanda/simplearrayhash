@@ -4,8 +4,10 @@
 #![deny(missing_docs)]
 
 pub mod map;
+pub mod set;
 
 pub use map::HashMap;
+pub use set::HashSet;
 
 const MAX_LOAD_FACTOR: f64 = 0.8;
 const WORD_BITS: usize = std::mem::size_of::<usize>() * 8;
