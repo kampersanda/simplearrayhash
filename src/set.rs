@@ -124,24 +124,13 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
+        let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
         let set = HashSet::new(&keys).unwrap();
-        assert_eq!(set.len(), 5);
+        assert_eq!(set.len(), 6);
     }
 
     #[test]
     fn test_get() {
-        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
-        let set = HashSet::new(&keys).unwrap();
-        for &k in &keys {
-            assert!(set.contains(k));
-        }
-        assert!(!set.contains("sigkdd"));
-        assert!(!set.contains("idml"));
-    }
-
-    #[test]
-    fn test_get_with_empty_key() {
         let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
         let set = HashSet::new(&keys).unwrap();
         for &k in &keys {
