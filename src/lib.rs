@@ -1,11 +1,13 @@
 //! # simplearrayhash
 //!
-//! Just a fast hash table for string keys.
+//! A simple fast implementation of an open addressing hash table for string keys.
 #![deny(missing_docs)]
 
 pub mod map;
+pub mod set;
 
 pub use map::HashMap;
+pub use set::HashSet;
 
 const MAX_LOAD_FACTOR: f64 = 0.8;
 const WORD_BITS: usize = std::mem::size_of::<usize>() * 8;

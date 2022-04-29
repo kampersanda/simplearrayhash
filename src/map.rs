@@ -16,11 +16,8 @@ where
     V: Default,
 {
     fn new(ptr: usize, len: usize) -> Self {
-        Self {
-            ptr,
-            len,
-            val: V::default(),
-        }
+        let val = V::default();
+        Self { ptr, len, val }
     }
 
     #[inline(always)]
@@ -182,15 +179,15 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
+        let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
         let map = HashMap::new(&records).unwrap();
-        assert_eq!(map.len(), 5);
+        assert_eq!(map.len(), 6);
     }
 
     #[test]
     fn test_get() {
-        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
+        let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
         let map = HashMap::new(&records).unwrap();
         for &(k, v) in &records {
@@ -202,7 +199,7 @@ mod tests {
 
     #[test]
     fn test_get_mut() {
-        let keys = vec!["icdm", "idce", "sigmod", "sigir", "acl"];
+        let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
         let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
         let mut map = HashMap::new(&records).unwrap();
         for &(k, v) in &records {
@@ -211,18 +208,6 @@ mod tests {
         for &(k, v) in &records {
             assert_eq!(*map.get(k).unwrap(), v * 3);
         }
-    }
-
-    #[test]
-    fn test_get_with_empty_key() {
-        let keys = vec!["icdm", "idce", "", "sigmod", "sigir", "acl"];
-        let records: Vec<_> = keys.iter().enumerate().map(|(i, k)| (k, i)).collect();
-        let map = HashMap::new(&records).unwrap();
-        for &(k, v) in &records {
-            assert_eq!(*map.get(k).unwrap(), v);
-        }
-        assert_eq!(map.get("sigkdd"), None);
-        assert_eq!(map.get("idml"), None);
     }
 
     #[test]
